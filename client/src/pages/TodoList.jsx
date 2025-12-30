@@ -10,8 +10,12 @@ function TodoList() {
   const [taskInput, setTaskInput] = useState('')
   const [currentFilter, setCurrentFilter] = useState('all')
   const [loading, setLoading] = useState(true)
+  const [priorityFilter, setPriorityFilter] = useState('all')
+  const [prioritySort, setPrioritySort] = useState('none')
   const [editingId, setEditingId] = useState(null)
   const [editingText, setEditingText] = useState('')
+  const [priorityInput, setPriorityInput] = useState('low')
+  const [editingPriority, setEditingPriority] = useState('low')
   const { user, logout } = useAuth()
 
   useEffect(() => {
@@ -42,13 +46,14 @@ function TodoList() {
     try {
       const response = await apiRequest('/api/tasks', {
         method: 'POST',
-        body: JSON.stringify({ text: taskText })
+        body: JSON.stringify({ text: taskText, priority: priorityInput })
       })
 
       if (response.ok) {
         const newTask = await response.json()
         setTasks(prev => [newTask, ...prev])
         setTaskInput('')
+        setPriorityInput('low')
       }
     } catch (error) {
       console.error('Add task error:', error)
@@ -93,9 +98,10 @@ function TodoList() {
     }
   }
 
-  const startEdit = (id, text) => {
+  const startEdit = (id, text, priority = 'low') => {
     setEditingId(id.toString())
     setEditingText(text)
+    setEditingPriority(priority || 'low')
   }
 
   const cancelEdit = () => {
@@ -113,7 +119,7 @@ function TodoList() {
     try {
       const response = await apiRequest(`/api/tasks/${id}`, {
         method: 'PUT',
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text, priority: editingPriority })
       })
 
       if (response.ok) {
@@ -148,11 +154,26 @@ function TodoList() {
     }
   }
 
-  const filteredTasks = tasks.filter(task => {
+  let filteredTasks = tasks.filter(task => {
     if (currentFilter === 'active') return !task.completed
     if (currentFilter === 'completed') return task.completed
     return true
   })
+
+  // apply priority filter
+  if (priorityFilter !== 'all') {
+    filteredTasks = filteredTasks.filter(task => (task.priority || 'low') === priorityFilter)
+  }
+
+  // apply priority sorting
+  if (prioritySort !== 'none') {
+    const order = { low: 1, medium: 2, high: 3 }
+    filteredTasks = [...filteredTasks].sort((a, b) => {
+      const pa = order[(a.priority || 'low')]
+      const pb = order[(b.priority || 'low')]
+      return prioritySort === 'asc' ? pa - pb : pb - pa
+    })
+  }
 
   const activeTasks = tasks.filter(task => !task.completed).length
   const hasCompleted = tasks.some(task => task.completed)
@@ -177,7 +198,8 @@ function TodoList() {
               <div className="brand-sub">📝 My To-Do List</div>
             </div>
           </div>
-            <div className="user-info">
+          
+          <div className="user-info">
             <span>Welcome, {user?.username}!</span>
             <button
               onClick={() => {
@@ -202,6 +224,11 @@ function TodoList() {
             placeholder="Add a new task..."
             autoComplete="off"
           />
+          <select value={priorityInput} onChange={(e) => setPriorityInput(e.target.value)} className="priority-select">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
           <button onClick={addTask} className="add-btn">Add Task</button>
         </div>
 
@@ -224,6 +251,24 @@ function TodoList() {
           >
             Completed
           </button>
+          <select
+            className="priority-combined-select"
+            value={`${priorityFilter}|${prioritySort}`}
+            onChange={(e) => {
+              const [f, s] = e.target.value.split('|')
+              setPriorityFilter(f)
+              setPrioritySort(s)
+            }}
+            title="Filter and sort by priority"
+          >
+            <option value="all|none">All priorities · No sort</option>
+            <option value="all|asc">All · Low → High</option>
+            <option value="all|desc">All · High → Low</option>
+            <option value="low|none">Low only</option>
+            <option value="medium|none">Medium only</option>
+            <option value="high|none">High only</option>
+          </select>
+          
         </div>
 
         <div className="stats-section">
@@ -270,22 +315,34 @@ function TodoList() {
                       }}
                       autoFocus
                     />
+                    <select
+                      value={editingPriority}
+                      onChange={(e) => setEditingPriority(e.target.value)}
+                      className="priority-select"
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
                     <button className="save-btn" onClick={() => saveEdit(task.id)}>Save</button>
                     <button className="cancel-btn" onClick={cancelEdit}>Cancel</button>
                   </>
                 ) : (
                   <>
-                    <span
-                      className="task-text"
-                      title="Double-click to edit"
-                      onDoubleClick={() => startEdit(task.id, task.text)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => { if (e.key === 'Enter') startEdit(task.id, task.text) }}
-                    >
-                      {task.text}
-                    </span>
-                    <button className="edit-btn" onClick={() => startEdit(task.id, task.text)}>Edit</button>
+                    <>
+                      <span className={`priority-badge ${task.priority || 'low'}`}>{(task.priority || 'low').toUpperCase()}</span>
+                      <span
+                        className="task-text"
+                        title="Double-click to edit"
+                        onDoubleClick={() => startEdit(task.id, task.text, task.priority)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === 'Enter') startEdit(task.id, task.text, task.priority) }}
+                      >
+                        {task.text}
+                      </span>
+                      <button className="edit-btn" onClick={() => startEdit(task.id, task.text, task.priority)}>Edit</button>
+                    </>
                   </>
                 )}
                 <button

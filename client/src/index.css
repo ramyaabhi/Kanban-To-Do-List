@@ -99,6 +99,10 @@ h1 {
     font-size: 0.95rem;
 }
 
+.header-controls {
+    /* removed: combined control moved back to filter section */
+}
+
 .user-info {
     display: flex;
     align-items: center;
@@ -411,6 +415,50 @@ h1 {
     color: #333;
     word-break: break-word;
 }
+
+.priority-badge {
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    margin-right: 8px;
+    text-transform: capitalize;
+}
+.priority-badge.low { background:#dafbe6; color:#006d37; }
+.priority-badge.medium { background:#fff4db; color:#8a4b00; }
+.priority-badge.high { background:#ffe3e3; color:#8b0f0f; }
+
+.priority-select {
+    padding: 10px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+}
+
+.priority-filter-select,
+.priority-sort-select {
+    padding: 8px 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    background: white;
+    margin-left: 8px;
+}
+
+.priority-combined-select {
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    margin-left: 8px;
+}
+
+@media (max-width: 600px) {
+    .priority-combined-select { width: 100%; max-width: 320px; }
+}
+
 
 .task-edit-input {
     flex: 1;
