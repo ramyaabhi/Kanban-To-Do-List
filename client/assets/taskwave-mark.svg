@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="TaskWave mark"><title>TaskWave mark</title>
+  <rect width="120" height="120" rx="18" fill="#071428"/>
+  <g transform="translate(18,18)">
+    <rect x="0" y="0" width="28" height="84" rx="8" fill="#0077FF"/>
+    <rect x="38" y="8" width="28" height="76" rx="8" fill="#00C2A8"/>
+    <path d="M86 48 q-8 -18 -26 0" fill="none" stroke="#7BE2CC" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

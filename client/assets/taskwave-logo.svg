@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="120" viewBox="0 0 420 120" role="img" aria-label="TaskWave logo"><title>TaskWave</title>
+  <defs>
+    <linearGradient id="twg" x1="0" x2="1">
+      <stop offset="0" stop-color="#00C2A8"/>
+      <stop offset="1" stop-color="#0077FF"/>
+    </linearGradient>
+  </defs>
+  <!-- mark: three lanes with subtle wave -->
+  <g transform="translate(12,12)">
+    <rect x="0" y="0" width="64" height="84" rx="8" fill="#F3FDFA" stroke="#E6F8F5"/>
+    <rect x="82" y="0" width="64" height="84" rx="8" fill="#EEF9FF"/>
+    <rect x="164" y="0" width="64" height="84" rx="8" fill="#F2F7FF"/>
+    <!-- wave accents -->
+    <path d="M6 58 q18 -24 36 0 t36 0" fill="none" stroke="#00C2A8" stroke-width="4" stroke-linecap="round" opacity="0.95"/>
+    <path d="M88 40 q18 -18 36 0" fill="none" stroke="#0077FF" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+    <rect x="8" y="10" width="48" height="10" rx="3" fill="#0077FF" opacity="0.95"/>
+    <rect x="90" y="10" width="48" height="10" rx="3" fill="#00C2A8" opacity="0.95"/>
+  </g>
+  <!-- text -->
+  <g transform="translate(250,70)">
+    <text x="0" y="0" font-family="Segoe UI, Roboto, Arial" font-size="34" font-weight="700" fill="url(#twg)">TaskWave</text>
+  </g>
+</svg>

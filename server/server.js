@@ -212,7 +212,10 @@ app.get('/api/me', authenticateToken, async (req, res) => {
 app.get('/api/tasks', authenticateToken, async (req, res) => {
     try {
         const tasks = await readData(TASKS_FILE);
-        const userTasks = tasks.filter(task => task.userId === req.user.id);
+        // Ensure tasks have a priority field (default 'low')
+        const userTasks = tasks
+            .filter(task => task.userId === req.user.id)
+            .map(task => ({ ...task, priority: task.priority || 'low' }));
         res.json(userTasks);
     } catch (error) {
         console.error('Get tasks error:', error);
@@ -223,11 +226,15 @@ app.get('/api/tasks', authenticateToken, async (req, res) => {
 // Create new task
 app.post('/api/tasks', authenticateToken, async (req, res) => {
     try {
-        const { text } = req.body;
+        const { text, priority } = req.body;
 
         if (!text || !text.trim()) {
             return res.status(400).json({ error: 'Task text is required' });
         }
+
+        // validate priority
+        const allowed = ['low', 'medium', 'high'];
+        const p = allowed.includes(priority) ? priority : 'low';
 
         const tasks = await readData(TASKS_FILE);
 
@@ -236,6 +243,7 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
             userId: req.user.id,
             text: text.trim(),
             completed: false,
+            priority: p,
             createdAt: new Date().toISOString()
         };
 
@@ -253,7 +261,7 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 app.put('/api/tasks/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { text, completed } = req.body;
+        const { text, completed, priority } = req.body;
 
         const tasks = await readData(TASKS_FILE);
         const taskIndex = tasks.findIndex(t => t.id === id && t.userId === req.user.id);
@@ -267,6 +275,10 @@ app.put('/api/tasks/:id', authenticateToken, async (req, res) => {
         }
         if (completed !== undefined) {
             tasks[taskIndex].completed = completed;
+        }
+        if (priority !== undefined) {
+            const allowed = ['low', 'medium', 'high'];
+            tasks[taskIndex].priority = allowed.includes(priority) ? priority : 'low';
         }
 
         await writeData(TASKS_FILE, tasks);

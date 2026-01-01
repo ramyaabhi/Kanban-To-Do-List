@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="FlowBoard mark"><title>FlowBoard mark</title>
+  <rect width="120" height="120" rx="16" fill="#0F172A"/>
+  <g transform="translate(14,18)">
+    <rect x="0" y="0" width="28" height="84" rx="6" fill="#4361EE"/>
+    <rect x="38" y="0" width="28" height="84" rx="6" fill="#00B4D8"/>
+    <rect x="76" y="0" width="28" height="84" rx="6" fill="#7B61FF"/>
+  </g>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="120" viewBox="0 0 400 120" role="img" aria-label="FlowBoard logo"><title>FlowBoard</title>
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#00B4D8"/>
+      <stop offset="1" stop-color="#4361EE"/>
+    </linearGradient>
+  </defs>
+  <!-- mark: three columns -->
+  <g transform="translate(12,10)">
+    <rect x="0" y="0" width="60" height="80" rx="6" fill="#F8FAFF" stroke="#E6EEFF"/>
+    <rect x="74" y="0" width="60" height="80" rx="6" fill="#EAF8FF"/>
+    <rect x="148" y="0" width="60" height="80" rx="6" fill="#E6EEFF"/>
+    <!-- small cards -->
+    <rect x="8" y="8" width="44" height="12" rx="3" fill="#4361EE" opacity="0.95"/>
+    <rect x="8" y="28" width="44" height="10" rx="3" fill="#00B4D8" opacity="0.95"/>
+    <rect x="82" y="8" width="44" height="12" rx="3" fill="#4361EE" opacity="0.95"/>
+    <rect x="156" y="8" width="44" height="12" rx="3" fill="#00B4D8" opacity="0.95"/>
+  </g>
+  <!-- text -->
+  <g transform="translate(230,66)">
+    <text x="0" y="0" font-family="Segoe UI, Roboto, Arial" font-size="32" font-weight="700" fill="url(#g)">FlowBoard</text>
+  </g>
+</svg>

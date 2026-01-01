@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import '../index.css'
+import TaskWaveLogo from '../../assets/taskwave-logo.svg'
+import TaskWaveMark from '../../assets/taskwave-mark.svg'
 
 function Home() {
   const navigate = useNavigate()
@@ -14,8 +16,13 @@ function Home() {
   return (
     <div className="container">
       <div className="home-hero">
-        <h1>Kanban To-Do</h1>
-        <p className="tagline">Organize your tasks visually — simple, fast, productive.</p>
+        <div className="brand-home">
+          <img src={TaskWaveLogo} alt="TaskWave logo" className="brand-logo"/>
+          <div>
+            <h1>TaskWave</h1>
+            <p className="tagline">Organize your tasks visually — simple, fast, productive.</p>
+          </div>
+        </div>
 
         <div className="home-cta">
           <button className="auth-btn" onClick={openApp}>Open App</button>

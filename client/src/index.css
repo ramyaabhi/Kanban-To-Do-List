@@ -74,6 +74,33 @@ h1 {
     flex: 1;
 }
 
+/* Brand styles for header logo and name */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.brand-logo {
+    height: 48px;
+    width: auto;
+}
+.brand-mark {
+    display: none;
+    height: 40px;
+    width: auto;
+}
+.brand-title {
+    color: #667eea;
+    font-weight: 800;
+    font-size: 1.25rem;
+}
+.brand-sub {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+
+
 .user-info {
     display: flex;
     align-items: center;
@@ -387,6 +414,64 @@ h1 {
     word-break: break-word;
 }
 
+.priority-badge {
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    margin-right: 8px;
+    text-transform: capitalize;
+}
+.priority-badge.low { background:#dafbe6; color:#006d37; }
+.priority-badge.medium { background:#fff4db; color:#8a4b00; }
+.priority-badge.high { background:#ffe3e3; color:#8b0f0f; }
+
+.priority-select {
+    padding: 10px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+}
+
+.priority-filter-select,
+.priority-sort-select {
+    padding: 8px 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    background: white;
+    margin-left: 8px;
+}
+
+.priority-combined-select {
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    margin-left: 8px;
+}
+
+@media (max-width: 600px) {
+    .priority-combined-select { width: 100%; max-width: 320px; }
+}
+
+
+.task-edit-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+}
+
+.task-edit-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.06);
+}
+
 .delete-btn {
     padding: 8px 12px;
     background: #ff6b6b;
@@ -399,6 +484,34 @@ h1 {
     font-weight: 600;
 }
 
+.edit-btn, .save-btn, .cancel-btn {
+    padding: 8px 12px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background: #667eea;
+    color: #fff;
+}
+
+.edit-btn:hover { transform: translateY(-1px); }
+
+.save-btn {
+    background: #28a745;
+    color: #fff;
+}
+
+.cancel-btn {
+    background: #6c757d;
+    color: #fff;
+}
+
 /* Home page styles */
 .home-hero {
     background: white;
@@ -407,6 +520,15 @@ h1 {
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
     text-align: center;
 }
+
+.brand-home {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.brand-home .brand-logo { height: 56px; }
 
 .home-hero h1 {
     font-size: 3rem;
@@ -510,6 +632,10 @@ h1 {
     .add-btn {
         width: 100%;
     }
+
+    /* Use compact mark on small screens */
+    .brand-logo { display: none; }
+    .brand-mark { display: block; }
 
     .stats-section {
         flex-direction: column;
