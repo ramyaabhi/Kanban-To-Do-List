@@ -41,9 +41,9 @@ function Register() {
 
       if (response.ok) {
         setSuccess('Registration successful! Redirecting...')
-        login(data.token, data.user)
+        //login(data.token, data.user)
         setTimeout(() => {
-          navigate('/app')
+          navigate('/login')
         }, 1000)
       } else {
         setError(data.error || 'Registration failed')

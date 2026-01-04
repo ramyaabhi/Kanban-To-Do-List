@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(userData))
     setUser(userData)
-    navigate('/')
+    navigate('/app')
   }
 
   const logout = () => {

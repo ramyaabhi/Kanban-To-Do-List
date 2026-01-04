@@ -27,7 +27,12 @@ export async function apiRequest(url, options = {}) {
     // Token expired or invalid
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    window.location.href = '/login'
+    // navigate to SPA login route (use hash to avoid full page reload)
+    try {
+      window.location.hash = '#/login'
+    } catch (e) {
+      window.location.href = '/login'
+    }
     throw new Error('Session expired. Please login again.')
   }
 

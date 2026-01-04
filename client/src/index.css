@@ -30,7 +30,7 @@ body {
 
 .container {
     width: 100%;
-    max-width: 600px;
+    max-width: 980px;
 }
 
 .todo-app {
@@ -361,6 +361,62 @@ h1 {
 .task-list::-webkit-scrollbar-thumb {
     background: #667eea;
     border-radius: 10px;
+}
+
+/* Kanban board styles */
+.kanban-board {
+    display: flex;
+    gap: 18px;
+    margin-top: 8px;
+}
+
+.kanban-column {
+    background: #f7f9fb;
+    border-radius: 12px;
+    padding: 12px;
+    flex: 1;
+    min-width: 200px;
+    max-height: 480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e6e9ee;
+    margin-bottom: 10px;
+}
+
+.kanban-column-header h3 { margin: 0; color: #333; font-size: 1.05rem }
+.kanban-column-body { overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 10px }
+.empty-column { color: #999; text-align: center; padding: 18px 8px }
+
+.kanban-card {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 72px;
+}
+
+.kanban-card.completed { opacity: 0.6 }
+.card-top { display: flex; gap: 8px; align-items: center }
+.card-title { flex: 1; font-size: 14px; color: #222 }
+.card-controls { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap }
+.move-controls { display:flex; gap:6px }
+.move-btn { padding:6px 8px; border-radius:6px; border:none; background:#e9eefb; cursor:pointer }
+.move-btn:hover { transform:translateY(-1px); }
+
+.card-actions { display:flex; gap:8px; align-items:center }
+
+@media (max-width: 900px) {
+    .kanban-board { flex-direction: column }
 }
 
 .task-item {

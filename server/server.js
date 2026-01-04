@@ -226,7 +226,7 @@ app.get('/api/tasks', authenticateToken, async (req, res) => {
 // Create new task
 app.post('/api/tasks', authenticateToken, async (req, res) => {
     try {
-        const { text, priority } = req.body;
+        const { text, priority, status } = req.body;
 
         if (!text || !text.trim()) {
             return res.status(400).json({ error: 'Task text is required' });
@@ -244,6 +244,7 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
             text: text.trim(),
             completed: false,
             priority: p,
+            status: status || 'todo',
             createdAt: new Date().toISOString()
         };
 
@@ -261,7 +262,7 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 app.put('/api/tasks/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { text, completed, priority } = req.body;
+        const { text, completed, priority, status } = req.body;
 
         const tasks = await readData(TASKS_FILE);
         const taskIndex = tasks.findIndex(t => t.id === id && t.userId === req.user.id);
@@ -279,6 +280,10 @@ app.put('/api/tasks/:id', authenticateToken, async (req, res) => {
         if (priority !== undefined) {
             const allowed = ['low', 'medium', 'high'];
             tasks[taskIndex].priority = allowed.includes(priority) ? priority : 'low';
+        }
+        if (status !== undefined) {
+            const allowedStatuses = ['todo', 'inprogress', 'done'];
+            tasks[taskIndex].status = allowedStatuses.includes(status) ? status : tasks[taskIndex].status || 'todo';
         }
 
         await writeData(TASKS_FILE, tasks);

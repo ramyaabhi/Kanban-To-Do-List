@@ -27,12 +27,20 @@ function TodoList() {
       const response = await apiRequest('/api/tasks')
       if (response.ok) {
         const data = await response.json()
-        setTasks(data)
+        // normalize tasks (ensure status and string ids)
+        const normalized = data.map(t => ({ ...t, status: t.status || 'todo', id: t.id ? t.id.toString() : t.id }))
+        setTasks(normalized)
       }
     } catch (error) {
       console.error('Load tasks error:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      addTask()
     }
   }
 
@@ -46,7 +54,7 @@ function TodoList() {
     try {
       const response = await apiRequest('/api/tasks', {
         method: 'POST',
-        body: JSON.stringify({ text: taskText, priority: priorityInput })
+        body: JSON.stringify({ text: taskText, priority: priorityInput, status: 'todo' })
       })
 
       if (response.ok) {
@@ -133,6 +141,22 @@ function TodoList() {
     }
   }
 
+  const changeStatus = async (id, status) => {
+    try {
+      const response = await apiRequest(`/api/tasks/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status })
+      })
+
+      if (response.ok) {
+        const updatedTask = await response.json()
+        setTasks(prev => prev.map(t => t.id === id.toString() ? updatedTask : t))
+      }
+    } catch (error) {
+      console.error('Change status error:', error)
+      alert('Failed to move task. Please try again.')
+    }
+  }
   const clearCompleted = async () => {
     try {
       const response = await apiRequest('/api/tasks', {
@@ -148,24 +172,16 @@ function TodoList() {
     }
   }
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      addTask()
-    }
-  }
-
   let filteredTasks = tasks.filter(task => {
     if (currentFilter === 'active') return !task.completed
     if (currentFilter === 'completed') return task.completed
     return true
   })
 
-  // apply priority filter
   if (priorityFilter !== 'all') {
     filteredTasks = filteredTasks.filter(task => (task.priority || 'low') === priorityFilter)
   }
 
-  // apply priority sorting
   if (prioritySort !== 'none') {
     const order = { low: 1, medium: 2, high: 3 }
     filteredTasks = [...filteredTasks].sort((a, b) => {
@@ -282,79 +298,79 @@ function TodoList() {
           )}
         </div>
 
-        <ul className="task-list">
-          {filteredTasks.length === 0 ? (
-            <li className="empty-state">
-              {currentFilter === 'all'
-                ? 'No tasks yet. Add one above!'
-                : currentFilter === 'active'
-                ? 'No active tasks!'
-                : 'No completed tasks!'}
-            </li>
-          ) : (
-            filteredTasks.map(task => (
-              <li
-                key={task.id}
-                className={`task-item ${task.completed ? 'completed' : ''}`}
-              >
-                <input
-                  type="checkbox"
-                  className="task-checkbox"
-                  checked={task.completed}
-                  onChange={() => toggleTask(task.id)}
-                />
-                {editingId === task.id.toString() ? (
-                  <>
-                    <input
-                      className="task-edit-input"
-                      value={editingText}
-                      onChange={(e) => setEditingText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') saveEdit(task.id)
-                        if (e.key === 'Escape') cancelEdit()
-                      }}
-                      autoFocus
-                    />
-                    <select
-                      value={editingPriority}
-                      onChange={(e) => setEditingPriority(e.target.value)}
-                      className="priority-select"
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                    <button className="save-btn" onClick={() => saveEdit(task.id)}>Save</button>
-                    <button className="cancel-btn" onClick={cancelEdit}>Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <>
-                      <span className={`priority-badge ${task.priority || 'low'}`}>{(task.priority || 'low').toUpperCase()}</span>
-                      <span
-                        className="task-text"
-                        title="Double-click to edit"
-                        onDoubleClick={() => startEdit(task.id, task.text, task.priority)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === 'Enter') startEdit(task.id, task.text, task.priority) }}
-                      >
-                        {task.text}
-                      </span>
-                      <button className="edit-btn" onClick={() => startEdit(task.id, task.text, task.priority)}>Edit</button>
-                    </>
-                  </>
-                )}
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteTask(task.id)}
-                >
-                  Delete
-                </button>
-              </li>
-            ))
-          )}
-        </ul>
+        <div className="kanban-board">
+          {['todo', 'inprogress', 'done'].map(column => {
+            const colTasks = filteredTasks.filter(t => (t.status || 'todo') === column || (column === 'done' && t.completed))
+            const title = column === 'todo' ? 'To Do' : column === 'inprogress' ? 'In Progress' : 'Done'
+            return (
+              <div className="kanban-column" key={column}>
+                <div className="kanban-column-header">
+                  <h3>{title}</h3>
+                  <span className="col-count">{colTasks.length}</span>
+                </div>
+                <div className="kanban-column-body">
+                  {colTasks.length === 0 ? (
+                    <div className="empty-column">No cards</div>
+                  ) : (
+                    colTasks.map(task => (
+                      <div className={`kanban-card ${task.completed ? 'completed' : ''}`} key={task.id}>
+                        {editingId === task.id.toString() ? (
+                          <div className="card-edit">
+                            <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+                              <input
+                                className="task-edit-input"
+                                value={editingText}
+                                onChange={(e) => setEditingText(e.target.value)}
+                              />
+                              <select className="priority-select" value={editingPriority} onChange={(e) => setEditingPriority(e.target.value)}>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                              </select>
+                            </div>
+                            <div style={{marginTop: 8, display: 'flex', gap: 8}}>
+                              <button className="save-btn" onClick={() => saveEdit(task.id)}>Save</button>
+                              <button className="cancel-btn" onClick={cancelEdit}>Cancel</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="card-top">
+                              <span className={`priority-badge ${task.priority || 'low'}`}>{(task.priority || 'low').toUpperCase()}</span>
+                              <div className="card-title" title={task.text}>{task.text}</div>
+                            </div>
+                            <div className="card-controls">
+                              <div className="move-controls">
+                                {column === 'todo' && (
+                                  <button className="move-btn" onClick={() => changeStatus(task.id, 'inprogress')}>▶</button>
+                                )}
+                                {column === 'inprogress' && (
+                                  <>
+                                    <button className="move-btn" onClick={() => changeStatus(task.id, 'todo')}>◀</button>
+                                    <button className="move-btn" onClick={() => changeStatus(task.id, 'done')}>▶</button>
+                                  </>
+                                )}
+                                {column === 'done' && (
+                                  <button className="move-btn" onClick={() => changeStatus(task.id, 'inprogress')}>◀</button>
+                                )}
+                              </div>
+
+                              <div className="card-actions">
+                                <input type="checkbox" className="task-checkbox" checked={task.completed} onChange={() => toggleTask(task.id)} />
+                                <button className="edit-btn" onClick={() => startEdit(task.id, task.text, task.priority)}>Edit</button>
+                                <button className="delete-btn" onClick={() => deleteTask(task.id)}>Delete</button>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
